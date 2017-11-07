@@ -99,8 +99,18 @@ class Motob:
 
             
 class Behavior:
-    # TODO
-    pass
+    #   Bare en start, mye å gjøres.
+    #   Classvariables
+    def __init__(self, bbcon, sensobs, motor_recommendations, active_flag, halt_request, priority, match_degree, weight):
+        bbcon = bbcon                                           # BBCON objektet som denne behavioren hører til
+        sensobs = sensobs                                       # Liste over de sensob-objektene som behavior-objektet bruker
+        motor_recommendations = motor_recommendations           # Liste over recommendations en per motob, sendes til arbitratoren
+        active_flag = active_flag                               # Boolean som forteller om denne behavioren er aktiv eller ikke
+        halt_request = halt_request                             # UVISST?? Se dokumentasjonen på behavior i oppgaven
+        priority = priority                                     # Statisk, forteller viktigheten til denne behavioren
+        match_degree = match_degree                             # Reelttall, mellom 0 og 1, sier noe om hvor naturlig det er å gjøre denne handlingen
+        weight = weight                                         # Produktet av priority og match_degree, brukes for av arbitrator for å bestemme hvilken behavior som skal utføres.
+
 
 
 class Arbitrator:
