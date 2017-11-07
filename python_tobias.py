@@ -3,7 +3,6 @@ class BBCON():
     pass
 
 class Sensob():
-    self.object = None
 
     def __init__(self, type):
         self.object = type
