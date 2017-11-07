@@ -86,11 +86,11 @@ class Motob:
         self.value = value
 
     def update(self, recommendation):
-        #TODO
-        self.value = recommendation # TDOD Sjekke denne. Skal laste motor recomandation til value
+        #TODO Sjekke denne. Skal laste motor recomandation til value, men vet ikke om value må hentes ut av eller er recomandation
+        self.value = recommendation
         self.operationalize()
 
-    def operationalize(self, operation=None):
+    def operationalize(self, operation=None): # Skal utføre motoroperasjonen den har fått, enten via operation eller self.value fra update. Endrer alle motorer i motorlisten til objektet
         use_operation = operation
         if operation is None:
             use_operation = self.value
