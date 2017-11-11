@@ -101,7 +101,7 @@ class Motob:
             
 class Behavior:
     #   Classvariables
-    def __init__(self, bbcon, sensobs, motor_recommendations, priority, behavior_number, active_flag=False, halt_request=False, match_degree=0, weight=None):
+    def __init__(self, bbcon, sensobs, priority, behavior_number, motor_recommendations=[], active_flag=False, halt_request=False, match_degree=0, weight=None):
         self.bbcon = bbcon                                           # BBCON objektet som denne behavioren hører til
         self.sensobs = sensobs                                       # Liste over de sensob-objektene som behavior-objektet bruker
         self.motor_recommendations = motor_recommendations           # Liste over recommendations en per motob, sendes til arbitratoren
