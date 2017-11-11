@@ -203,10 +203,8 @@ class Behavior:
             pass
 
         elif self.behavior_number == 3:
-            # TODO
-            pass
 
-        pass
+
 
 class Arbitrator:
 
