@@ -105,9 +105,8 @@ class Motob:
 
 
 class Behavior:
-
-    def __init__(self, bbcon, sensobs, motor_recommendations, active_flag, halt_request, priority, match_degree, weight,
-                 behavior_number):
+    #   Classvariables
+    def __init__(self, bbcon, sensobs, priority, behavior_number, motor_recommendations=[], active_flag=False, halt_request=False, match_degree=0, weight=None):
         self.bbcon = bbcon  # BBCON objektet som denne behavioren hører til
         self.sensobs = sensobs  # Liste over de sensob-objektene som behavior-objektet bruker
         self.motor_recommendations = motor_recommendations  # Liste over recommendations en per motob, sendes til arbitratoren
@@ -118,7 +117,26 @@ class Behavior:
         self.weight = weight  # Produktet av priority og match_degree, brukes for av arbitrator for å bestemme hvilken behavior som skal utføres.
         self.behavior_number = behavior_number  # For å vite hvilken behavior de ulike er.
 
-    def consider_activation(self):
+    def consider_activation(self):  # Sjekker om en inaktiv behavior burde aktiviseres
+        # TODO
+
+        values = []
+        for sensob in self.sensobs:
+            values.append(sensob.getValue())
+
+        if self.behavior_number == 1:  # Stoppe på rød vegg
+            # TODO
+            pass
+
+        elif self.behavior_number == 2:  # Følg linje
+            # TODO
+            pass
+
+        elif self.behavior_number == 3:  # Sving til venstre ved vanlig vegg
+            if values[0] < 5:
+                self.active_flag = True
+
+    def consider_deactivation(self):  # Sjekker om en aktiv behavior burde deaktiviseres
         # TODO
 
         values = []
@@ -134,27 +152,9 @@ class Behavior:
             pass
 
         elif self.behavior_number == 3:
-            # TODO
-            pass
-
-    def consider_deactivation(self):
-        # TODO
-
-        values = []
-        for sensob in self.sensobs:
-            values.append(sensob.getValue())
-
-        if self.behavior_number == 1:
-            # TODO
-            pass
-
-        elif self.behavior_number == 2:
-            # TODO
-            pass
-
-        elif self.behavior_number == 3:
-            # TODO
-            pass
+            self.sensobs[0].update()
+            if self.sensobs[0].get_value() > 5:
+                self.active_flag = False
 
     def update(self):
         # TODO
@@ -191,10 +191,8 @@ class Behavior:
             pass
 
         elif self.behavior_number == 3:
-            # TODO
-            pass
-
-        pass
+            self.sensobs[0].update()
+            self.match_degree = 5 - self.sensobs[0].get_value()
 
 
 class Arbitrator:
