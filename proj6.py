@@ -113,7 +113,7 @@ class Behavior:
         self.behavior_number = behavior_number                       # For å vite hvilken behavior de ulike er.
 
 
-    def consider_activation(self):
+    def consider_activation(self): # Sjekker om en ainktiv behavior burde aktiviseres
         # TODO
 
         values = []
@@ -132,7 +132,7 @@ class Behavior:
             # TODO
             pass
 
-    def consider_deavtivation(self):
+    def consider_deactivation(self): # Sjekker om en aktiv behavior burde deaktiviseres
         # TODO
 
         values = []

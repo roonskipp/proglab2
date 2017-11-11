@@ -137,7 +137,7 @@ class Behavior:
             # TODO
             pass
 
-    def consider_deavtivation(self):
+    def consider_deactivation(self):
         # TODO
 
         values = []
