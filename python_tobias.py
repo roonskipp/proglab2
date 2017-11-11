@@ -55,15 +55,15 @@ class Motob:
 class Behavior:
     #   Classvariables
     def __init__(self, bbcon, sensobs, motor_recommendations, active_flag, halt_request, priority, match_degree, weight, behavior_number):
-        bbcon = bbcon                                           # BBCON objektet som denne behavioren hører til
-        sensobs = sensobs                                       # Liste over de sensob-objektene som behavior-objektet bruker
-        motor_recommendations = motor_recommendations           # Liste over recommendations en per motob, sendes til arbitratoren
-        active_flag = active_flag                               # Boolean som forteller om denne behavioren er aktiv eller ikke
-        halt_request = halt_request                             # UVISST?? Se dokumentasjonen på behavior i oppgaven
-        priority = priority                                     # Statisk, forteller viktigheten til denne behavioren
-        match_degree = match_degree                             # Reelttall, mellom 0 og 1, sier noe om hvor naturlig det er å gjøre denne handlingen
-        weight = weight                                         # Produktet av priority og match_degree, brukes for av arbitrator for å bestemme hvilken behavior som skal utføres.
-        behavior_number = behavior_number                       # For å vite hvilken behavior de ulike er.
+        self.bbcon = bbcon                                           # BBCON objektet som denne behavioren hører til
+        self.sensobs = sensobs                                       # Liste over de sensob-objektene som behavior-objektet bruker
+        self.motor_recommendations = motor_recommendations           # Liste over recommendations en per motob, sendes til arbitratoren
+        self.active_flag = active_flag                               # Boolean som forteller om denne behavioren er aktiv eller ikke
+        self.halt_request = halt_request                             # UVISST?? Se dokumentasjonen på behavior i oppgaven
+        self.priority = priority                                     # Statisk, forteller viktigheten til denne behavioren
+        self.match_degree = match_degree                             # Reelttall, mellom 0 og 1, sier noe om hvor naturlig det er å gjøre denne handlingen
+        self.weight = weight                                         # Produktet av priority og match_degree, brukes for av arbitrator for å bestemme hvilken behavior som skal utføres.
+        self.behavior_number = behavior_number                       # For å vite hvilken behavior de ulike er.
 
 
     def consider_activation(self):
@@ -125,6 +125,8 @@ class Behavior:
 
     def sense_and_act(self):
         # TODO
+        # Må for hver behavior se på values ( sensor data ) og lage motob recommendations, og legge disse i sin egen liste
+        # over motob recommendations. Må også oppdatere match_degree basert på dataen, og oppdatere sin egen match degree.
         values = []
         for sensob in self.sensobs:
             values.append(sensob.getValue())
