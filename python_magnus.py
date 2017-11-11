@@ -1,5 +1,5 @@
 # Oving 6
-
+import random
 
 class BBCON:
     def __init__(self, behav=None, sensob=None, motobs=None, arbitrator=None):
@@ -91,13 +91,12 @@ class Motob:
         self.value = recommendation
         self.operationalize()
 
-    def operationalize(self,
-                       operation=None):  # Skal utføre motoroperasjonen den har fått, enten via operation eller self.value fra update. Endrer alle motorer i motorlisten til objektet
+    def operationalize(self, operation=None):  # Skal utføre motoroperasjonen den har fått, enten via operation eller self.value fra update. Endrer alle motorer i motorlisten til objektet
         use_operation = operation
         if operation is None:
             use_operation = self.value
         for motor in self.motors:
-            motor.set_value(use_operation)
+            motor.set_value(use_operation) # TODO Kan hende vi må endre eller legge til en hjelpeklasse her for å få det til å funke
 
 
 class Behavior:
@@ -116,6 +115,27 @@ class Behavior:
 
 
 class Arbitrator:
-    # TODO
-    pass
+
+    def __init__(self, bbcon):
+        self.bbcon = bbcon
+
+    def choose_action(self): # Skal ta inn alle aktive behavoirs og velge én av de
+        cur_val = 0
+        intervall = []
+        for act_behv in self.bbcon.act_behaviors:
+            intervall.append([cur_val, cur_val + act_behv.weight])  # Lager intervall med størresle bassert på vekten deres. Dvs. hvis du har to behaviors med vekt 0.8 og 0.5 vil intervallet bli [[0, 0.8],[0.8, 1.3]]
+            cur_val = cur_val + act_behv
+        win_weight = random.randrange(intervall[-1][-1]) # Velger tilfeldig ut en verdi innenfor intervallet. Større intervall vil da ha større sanns. for å vinne
+        for i in range(len(intervall)):
+            if win_weight >= intervall[i][0]:
+                if win_weight <= intervall[i][1]: # Sjekker hvilket intervall tallet havnet innenfor og returnerer indexen
+                    win_index = i
+                    break
+        win_behv = self.bbcon.act_behaviors[i]
+        return_val = []
+        for mr in win_behv.motor_recommendations: # Lager en liste med alle motorrecommendations for winner behavior pluss en boolean for halt_request på slutten
+            return_val.append(mr)
+        return_val.append(win_behv.halt_request)
+
+        return return_val
 
