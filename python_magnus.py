@@ -105,7 +105,7 @@ class Motob:
 
 
 class Behavior:
-    #   Classvariables
+
     def __init__(self, bbcon, sensobs, motor_recommendations, active_flag, halt_request, priority, match_degree, weight,
                  behavior_number):
         self.bbcon = bbcon  # BBCON objektet som denne behavioren hører til
@@ -212,8 +212,7 @@ class Arbitrator:
                                           -1])  # Velger tilfeldig ut en verdi innenfor intervallet. Større intervall vil da ha større sanns. for å vinne
         for i in range(len(intervall)):
             if win_weight >= intervall[i][0]:
-                if win_weight <= intervall[i][
-                    1]:  # Sjekker hvilket intervall tallet havnet innenfor og returnerer indexen
+                if win_weight <= intervall[i][1]:  # Sjekker hvilket intervall tallet havnet innenfor og returnerer indexen
                     win_index = i
                     break
         win_behv = self.bbcon.act_behaviors[i]
