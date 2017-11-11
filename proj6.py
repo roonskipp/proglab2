@@ -218,19 +218,12 @@ class Arbitrator:
         intervall = []
         for act_behv in self.bbcon.act_behaviors:
             intervall.append([cur_val, cur_val + act_behv.weight])  # Lager intervall med størresle bassert på vekten deres. Dvs. hvis du har to behaviors med vekt 0.8 og 0.5 vil intervallet bli [[0, 0.8],[0.8, 1.3]]
-            cur_val = cur_val + act_behv
+            cur_val = cur_val + act_behv.weight
         win_weight = random.randrange(intervall[-1][-1]) # Velger tilfeldig ut en verdi innenfor intervallet. Større intervall vil da ha større sanns. for å vinne
         for i in range(len(intervall)):
             if win_weight >= intervall[i][0]:
                 if win_weight <= intervall[i][1]: # Sjekker hvilket intervall tallet havnet innenfor og returnerer indexen
-                    win_index = i
+                    win_behv = self.bbcon.act_behaviors[i]
                     break
-        win_behv = self.bbcon.act_behaviors[i]
-        return_val = []
-        for mr in win_behv.motor_recommendations: # Lager en liste med alle motorrecommendations for winner behavior pluss en boolean for halt_request på slutten
-            return_val.append(mr)
-        return_val.append(win_behv.halt_request)
-
-        return return_val
-
+        return win_behv.motor_recommendations + [win_behv.halt_request]
 
