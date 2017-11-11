@@ -100,9 +100,8 @@ class Motob:
 
             
 class Behavior:
-    #   Bare en start, mye å gjøres.
     #   Classvariables
-    def __init__(self, bbcon, sensobs, motor_recommendations, active_flag, halt_request, priority, match_degree, weight):
+    def __init__(self, bbcon, sensobs, motor_recommendations, active_flag, halt_request, priority, match_degree, weight, behavior_number):
         bbcon = bbcon                                           # BBCON objektet som denne behavioren hører til
         sensobs = sensobs                                       # Liste over de sensob-objektene som behavior-objektet bruker
         motor_recommendations = motor_recommendations           # Liste over recommendations en per motob, sendes til arbitratoren
@@ -111,8 +110,85 @@ class Behavior:
         priority = priority                                     # Statisk, forteller viktigheten til denne behavioren
         match_degree = match_degree                             # Reelttall, mellom 0 og 1, sier noe om hvor naturlig det er å gjøre denne handlingen
         weight = weight                                         # Produktet av priority og match_degree, brukes for av arbitrator for å bestemme hvilken behavior som skal utføres.
+        behavior_number = behavior_number                       # For å vite hvilken behavior de ulike er.
 
 
+    def consider_activation(self):
+        # TODO
+
+        values = []
+        for sensob in self.sensobs:
+            values.append(sensob.getValue())
+
+        if self.behavior_number == 1:
+            # TODO
+            pass
+
+        elif self.behavior_number == 2:
+            # TODO
+            pass
+
+        elif self.behavior_number == 3:
+            # TODO
+            pass
+
+    def consider_deavtivation(self):
+        # TODO
+
+        values = []
+        for sensob in self.sensobs:
+            values.append(sensob.getValue())
+
+        if self.behavior_number == 1:
+            # TODO
+            pass
+
+        elif self.behavior_number == 2:
+            # TODO
+            pass
+
+        elif self.behavior_number == 3:
+            # TODO
+            pass
+
+    def update(self):
+        # TODO
+        # Sjekke om behavioren er aktiv eller ikke
+
+        if self.active_flag == True:
+            if self.consider_deactivation() == False:
+                # Behavior er aktiv og skal forbli aktiv.
+                self.sense_and_act()
+
+            elif self.consider_deactivation() == True:
+                # Behavior er aktiv, men skal deaktiveres
+                self.active_flag = False
+
+        elif self.active_flag == False:
+            if self.consider_activation() == True:
+                self.active_flag = True
+                self.sense_and_act()
+
+
+    def sense_and_act(self):
+        # TODO
+        values = []
+        for sensob in self.sensobs:
+            values.append(sensob.getValue())
+
+        if self.behavior_number == 1:
+            # TODO
+            pass
+
+        elif self.behavior_number == 2:
+            # TODO
+            pass
+
+        elif self.behavior_number == 3:
+            # TODO
+            pass
+
+        pass
 
 class Arbitrator:
 
