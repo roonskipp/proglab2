@@ -195,6 +195,7 @@ class Behavior:
             hitPercent = hits/12288
             self.match_degree = hitPercent
             self.weight = self.match_degree * self.priority
+            self.halt_request = True
 
             #Lag en motor-recommendation
 
