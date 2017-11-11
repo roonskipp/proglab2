@@ -95,7 +95,7 @@ class Motob:
         if operation is None:
             use_operation = self.value
         for motor in self.motors:
-            motor.set_value(use_operation)
+            motor.set_value(use_operation) #TODO Kan hende vi må endre eller legge til en hjelpeklasse her for å få det til å funke
 
             
 class Behavior:
