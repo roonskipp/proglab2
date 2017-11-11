@@ -101,7 +101,7 @@ class Motob:
             
 class Behavior:
     #   Classvariables
-    def __init__(self, bbcon, sensobs, motor_recommendations, active_flag, halt_request, priority, match_degree, weight, behavior_number):
+    def __init__(self, bbcon, sensobs, motor_recommendations, priority, behavior_number, active_flag=False, halt_request=False, match_degree=0, weight=None):
         self.bbcon = bbcon                                           # BBCON objektet som denne behavioren hører til
         self.sensobs = sensobs                                       # Liste over de sensob-objektene som behavior-objektet bruker
         self.motor_recommendations = motor_recommendations           # Liste over recommendations en per motob, sendes til arbitratoren
@@ -120,15 +120,15 @@ class Behavior:
         for sensob in self.sensobs:
             values.append(sensob.getValue())
 
-        if self.behavior_number == 1:
+        if self.behavior_number == 1: # Stoppe på rød vegg
             # TODO
             pass
 
-        elif self.behavior_number == 2:
+        elif self.behavior_number == 2: # Følg linje
             # TODO
             pass
 
-        elif self.behavior_number == 3:
+        elif self.behavior_number == 3: # Sving til venstre ved vanlig vegg
             # TODO
             pass
 
