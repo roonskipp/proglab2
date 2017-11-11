@@ -101,7 +101,7 @@ class Motob:
             
 class Behavior:
     #   Classvariables
-    def __init__(self, bbcon, sensobs, priority, behavior_number, motor_recommendations=[], active_flag=False, halt_request=False, match_degree=0, weight=None):
+    def __init__(self, bbcon, sensobs, motor_recommendations, active_flag, halt_request, priority, match_degree, weight, behavior_number):
         self.bbcon = bbcon                                           # BBCON objektet som denne behavioren hører til
         self.sensobs = sensobs                                       # Liste over de sensob-objektene som behavior-objektet bruker
         self.motor_recommendations = motor_recommendations           # Liste over recommendations en per motob, sendes til arbitratoren
@@ -113,26 +113,29 @@ class Behavior:
         self.behavior_number = behavior_number                       # For å vite hvilken behavior de ulike er.
 
 
-    def consider_activation(self): # Sjekker om en ainktiv behavior burde aktiviseres
+    def consider_activation(self):
         # TODO
 
         values = []
         for sensob in self.sensobs:
             values.append(sensob.getValue())
 
-        if self.behavior_number == 1: # Stoppe på rød vegg
+        if self.behavior_number == 1:
+            # MÅ DEFINERES I MAIN AT BEHAVIOR 1 objektet (kamera behavior) har avstandsmåler som andre sensob
+            # slik at avstandsmåleren havner i slot 2 på values
+            distance = values[1]
+            if distance < 4:
+                return True
+
+        elif self.behavior_number == 2:
             # TODO
             pass
 
-        elif self.behavior_number == 2: # Følg linje
+        elif self.behavior_number == 3:
             # TODO
             pass
 
-        elif self.behavior_number == 3: # Sving til venstre ved vanlig vegg
-            # TODO
-            pass
-
-    def consider_deactivation(self): # Sjekker om en aktiv behavior burde deaktiviseres
+    def consider_deavtivation(self):
         # TODO
 
         values = []
@@ -155,7 +158,7 @@ class Behavior:
         # TODO
         # Sjekke om behavioren er aktiv eller ikke
 
-        if self.active_flag == True:
+        if self.active_flag:
             if self.consider_deactivation() == False:
                 # Behavior er aktiv og skal forbli aktiv.
                 self.sense_and_act()
@@ -164,7 +167,7 @@ class Behavior:
                 # Behavior er aktiv, men skal deaktiveres
                 self.active_flag = False
 
-        elif self.active_flag == False:
+        else:
             if self.consider_activation() == True:
                 self.active_flag = True
                 self.sense_and_act()
@@ -178,9 +181,22 @@ class Behavior:
         for sensob in self.sensobs:
             values.append(sensob.getValue())
 
+        # bilde, stoppe på rød vegg = behavior nr1
         if self.behavior_number == 1:
             # TODO
-            pass
+            # Her har values bare 1 element, et pil objekt
+            imageObject = values[0]
+            hits = 0
+            for x in range(128):
+                for y in range(96):
+                    rgbValue = imageObject.getpixel()
+                    if rgbValue[0] > 200:
+                        hits += 1
+            hitPercent = hits/12288
+            self.match_degree = hitPercent
+            self.weight = self.match_degree * self.priority
+
+            #Lag en motor-recommendation
 
         elif self.behavior_number == 2:
             # TODO
