@@ -156,6 +156,7 @@ class Behavior:
 
         elif self.behavior_number == 4: # vi vil ikke at denne skal deaktiveres
             pass
+        
     def update(self):
         # TODO
         # Sjekke om behavioren er aktiv eller ikke
