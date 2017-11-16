@@ -87,7 +87,6 @@ class Motob:
         self.value = value
 
     def update(self, recommendation):
-        #TODO Sjekke denne. Skal laste motor recomandation til value, men vet ikke om value må hentes ut av eller er recomandation
         self.value = recommendation
         self.operationalize()
 
@@ -96,8 +95,7 @@ class Motob:
         if operation is None:
             use_operation = self.value
         for motor in self.motors:
-            motor.set_value(use_operation)  # TODO Kan hende vi må endre eller legge til en hjelpeklasse her for å få det til å funke
-
+            motor.set_value(use_operation)
             
 class Behavior:
     #   Classvariables
@@ -110,11 +108,9 @@ class Behavior:
         self.priority = priority                                     # Statisk, forteller viktigheten til denne behavioren
         self.match_degree = match_degree                             # Reelttall, mellom 0 og 1, sier noe om hvor naturlig det er å gjøre denne handlingen
         self.weight = weight                                         # Produktet av priority og match_degree, brukes for av arbitrator for å bestemme hvilken behavior som skal utføres.
-        self.behavior_number = behavior_number                       # For å vite hvilken behavior de ulike er.
-
+        self.behavior_number = behavior_number                       # For å vite hvilken behavior de ulike er
 
     def consider_activation(self):
-        # TODO
 
         values = []
         for sensob in self.sensobs:
