@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from time import sleep
 import RPi.GPIO as GPIO
-import wiringpi2 as wp
+import wiringpi as wp
 
 
 class Motors():
@@ -39,6 +39,7 @@ class Motors():
         self.set_left_speed(self.dc)
         self.set_right_speed(self.dc)
         self.persist(dur)
+        print("lol papabless")
 
     def backward(self, speed=0.25, dur=None):
         self.dc = int(self.max * speed)

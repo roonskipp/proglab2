@@ -135,6 +135,9 @@ class Behavior:
             # TODO
             pass
 
+        elif self.behavior_number == 4: # Bare kjører fremover, lav prioritet slik at hvis ingenting annet skjer, så kjører den fremover.
+            return True
+
     def consider_deavtivation(self):
         # TODO
 
@@ -154,6 +157,8 @@ class Behavior:
             # TODO
             pass
 
+        elif self.behavior_number == 4: # vi vil ikke at denne skal deaktiveres
+            pass
     def update(self):
         # TODO
         # Sjekke om behavioren er aktiv eller ikke
@@ -204,6 +209,13 @@ class Behavior:
             pass
 
         elif self.behavior_number == 3:
+            # TODO
+            pass
+
+        elif self.behavior_number == 4:
+            self.match_degree = 1
+            motorRec = [1, 1, 1]
+            self.motor_recommendations.append(motorRec)
 
 
 
@@ -225,4 +237,5 @@ class Arbitrator:
                     win_behv = self.bbcon.act_behaviors[i]
                     break
         return win_behv.motor_recommendations + [win_behv.halt_request]
+
 
