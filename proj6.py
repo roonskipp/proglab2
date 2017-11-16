@@ -162,13 +162,21 @@ class Behavior:
                 return True
 
         elif self.behavior_number == 2:
-            # TODO
-            pass
+            # values er her en liste som inneholder liste med 6 verdier (1 p/ sensor)
+            for value in values[0]:
+                if value < 0.1: # sjekker om verdien på en av sensorene tilavarer sort -> nådd edge, MÅ endre retning
+                    return True
 
         elif self.behavior_number == 3:
+<<<<<<< Updated upstream
             if values[0] < 5:
                 self.active_flag = True
                 return True
+=======
+            for surface_color in values[0]:
+                if not -0.1 < surface_color <  + 0.1:
+                    return True
+>>>>>>> Stashed changes
 
         elif self.behavior_number == 4: # Bare kjører fremover, lav prioritet slik at hvis ingenting annet skjer, så kjører den fremover.
             return True
@@ -187,8 +195,10 @@ class Behavior:
             return False
 
         elif self.behavior_number == 2:
-            # TODO
-            pass
+            for value in values[0]:
+                if value < 0.1:  # kan ikke deaktiveres dersom sort kant fortsatt er tilstede
+                    return False
+                return True
 
         elif self.behavior_number == 3:
             self.sensobs[0].update()
@@ -246,8 +256,8 @@ class Behavior:
             #Lag en motor-recommendation
 
         elif self.behavior_number == 2:
-            # TODO
-            pass
+            self.match_degree = 1
+            self.motor_recommendations = [[-0.1, -0.1, 1], [0.1, -0.1, 1]]
 
         elif self.behavior_number == 3:
             self.match_degree = (5 - self.sensobs[0].getValue())/5
@@ -310,12 +320,14 @@ def main():
 
     print("BBCON opprettet")
 
+    detectEdgeBehavior = Behavior(bbcon,[refSens], None, False, False, 10, None, None,2)
     redBehavior = Behavior(bbcon, [camSens, ultraSens], None, False, False, 0.9, None, None, 1)
     dodgeBehavior = Behavior(bbcon, [ultraSens], None, False, False, 0.8, None, None, 3)
     driveBehavior = Behavior(bbcon, [], None, True, False, 0.1, None, None, 4)
 
     print("Behaviors opprettet")
 
+    bbcon.add_behavior(detectEdgeBehavior)
     bbcon.add_behavior(redBehavior)
     bbcon.add_behavior(dodgeBehavior)
     bbcon.add_behavior(driveBehavior)
