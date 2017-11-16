@@ -1,5 +1,13 @@
 #Oving 6
 import random
+import time
+from irproximity_sensor import IRProximitySensor
+from motors import Motors
+from reflectance_sensors import ReflectanceSensors
+from ultrasonic import Ultrasonic
+from zumo_button import ZumoButton
+from camera import Camera
+from imager2 import Imager
 #update
 
 class BBCON:
@@ -9,7 +17,7 @@ class BBCON:
         self.act_behaviors = []
         self.sensor_objs = [] if sensob is None else sensob
         self.motor_objs = [] if motobs is None else motobs
-        self.arbitrator = Arbitrator() if arbitrator is None else arbitrator
+        self.arbitrator = Arbitrator(self) if arbitrator is None else arbitrator
 
     def add_behavior(self, behavior): # Legger til aktiviteter roboten kan utføre
         self.behaviors.append(behavior)
@@ -25,14 +33,40 @@ class BBCON:
             self.act_behaviors.remove(behavior)
 
     def run_one_timestep(self):
+        breakProg = False
         #TODO
         # 1. Update all sensobs - These updates will involve querying the relevant sensors for their values, along with any pre-processing of those values (as described below)
+        for sensob in self.sensor_objs:
+            sensob.update()
+        print("Har kjørt 1")
         # 2. Update all behaviors - These updates involve reading relevant sensob values and producing a motor recommendation.
+        for behavior in self.behaviors:
+            behavior.update()
+            if behavior.active_flag and behavior not in self.act_behaviors:
+                self.activate_behavior(behavior)
+            elif not behavior.active_flag and behavior in self.act_behaviors:
+                self.deactivate_behavior(behavior)
+        print("Har kjørt 2")
         # 3. Invoke the arbitrator by calling arbitrator.choose action, which will choose a winning behavior and return that behavior’s motor recommendations and halt request flag.
+        arbitratorResult = self.arbitrator.choose_action()
+        print("Har kjørt 3")
         # 4. Update the motobs based on these motor recommendations. The motobs will then update the settings of all motors.
+        if arbitratorResult[1]:
+            breakProg = True
+        for motob in self.motor_objs:
+            motob.update(arbitratorResult[0])
+        print("Har kjørt 4")
         # 5. Wait - This pause (in code execution) will allow the motor settings to remain active for a short period of time, e.g., one half second, thus producing activity in the robot, such as moving forward or turning.
+        sleepingTime = 0
+        for x in range(arbitratorResult[0]):
+            sleepingTime += arbitratorResult[0][x][2]
+        time.sleep(sleepingTime)
+        print("Har kjørt 5")
         # 6. Reset the sensobs - Each sensob may need to reset itself, or its associated sensor(s), in some way.
-        pass
+        print("Har kjørt 6")
+        for sensob in self.sensor_objs:
+            sensob.reset()
+        return breakProg
 
 
 class Sensob:
@@ -95,7 +129,8 @@ class Motob:
         if operation is None:
             use_operation = self.value
         for motor in self.motors:
-            motor.set_value(use_operation)
+            for rec in use_operation:
+                motor.set_value(rec)
             
 class Behavior:
     #   Classvariables
@@ -156,7 +191,7 @@ class Behavior:
 
         elif self.behavior_number == 4: # vi vil ikke at denne skal deaktiveres
             pass
-        
+
     def update(self):
         # TODO
         # Sjekke om behavioren er aktiv eller ikke
@@ -212,8 +247,7 @@ class Behavior:
 
         elif self.behavior_number == 4:
             self.match_degree = 1
-            motorRec = [1, 1, 1]
-            self.motor_recommendations.append(motorRec)
+            self.motor_recommendations = [[1, 1, 1]]
 
 
 
@@ -234,6 +268,48 @@ class Arbitrator:
                 if win_weight <= intervall[i][1]: # Sjekker hvilket intervall tallet havnet innenfor og returnerer indexen
                     win_behv = self.bbcon.act_behaviors[i]
                     break
-        return win_behv.motor_recommendations + [win_behv.halt_request]
+        return win_behv.motor_recommendations, win_behv.halt_request
+
+
+def main():
+    irSens = Sensob(IRProximitySensor())
+    ultraSens = Sensob(Ultrasonic())
+    refSens = Sensob(ReflectanceSensors())
+    camSens = Sensob(Camera())
+
+    print("Sensobs opprettet")
+
+    sensList = [irSens, ultraSens, refSens, camSens]
+
+    motor1 = Motors()
+    motorList = [motor1]
+
+    print("Motorer opprettet")
+
+    bbcon = BBCON(None, sensList, motorList, None)
+
+    print("BBCON opprettet")
+
+    redBehavior = Behavior(bbcon, [camSens, ultraSens], None, False, False, 0.7, None, None, 1)
+    dodgeBehavior = Behavior(bbcon, [ultraSens], None, False, False, 0.9, None, None, 3)
+    driveBehavior = Behavior(bbcon, [], None, True, False, 0.1, None, None, 4)
+
+    print("Behaviors opprettet")
+
+    bbcon.add_behavior(redBehavior)
+    bbcon.add_behavior(dodgeBehavior)
+    bbcon.add_behavior(driveBehavior)
+
+    print("Behaviors lagt til. \n Forsøker å starte roboten.")
+
+    runProg = False
+    zumoButton = ZumoButton()
+    zumoButton.wait_for_press()
+    while not runProg:
+        runProg = bbcon.run_one_timestep()
+
+main()
+
+
 
 
