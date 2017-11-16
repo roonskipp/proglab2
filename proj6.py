@@ -209,8 +209,8 @@ class Behavior:
             pass
 
         elif self.behavior_number == 3:
-            # TODO
-            pass
+            self.match_degree = 5 - self.sensobs[0].get_value()
+            self.motor_recommendations = [[-1, -1, 1], [1, -1, 1]]
 
         elif self.behavior_number == 4:
             self.match_degree = 1

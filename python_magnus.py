@@ -100,8 +100,7 @@ class Motob:
         if operation is None:
             use_operation = self.value
         for motor in self.motors:
-            motor.set_value(
-                use_operation)  # TODO Kan hende vi må endre eller legge til en hjelpeklasse her for å få det til å funke
+            motor.set_value(use_operation)  # TODO Kan hende vi må endre eller legge til en hjelpeklasse her for å få det til å funke
 
 
 class Behavior:
@@ -191,8 +190,8 @@ class Behavior:
             pass
 
         elif self.behavior_number == 3:
-            self.sensobs[0].update()
             self.match_degree = 5 - self.sensobs[0].get_value()
+            self.motor_recommendations = [[-1, -1, 1], [1, -1, 1]]
 
 
 class Arbitrator:
