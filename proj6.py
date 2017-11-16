@@ -52,13 +52,13 @@ class BBCON:
         print("Har kjørt 3")
         # 4. Update the motobs based on these motor recommendations. The motobs will then update the settings of all motors.
         if arbitratorResult[1]:
-            breakProg = True
+            return True
         for motob in self.motor_objs:
             motob.update(arbitratorResult[0])
         print("Har kjørt 4")
         # 5. Wait - This pause (in code execution) will allow the motor settings to remain active for a short period of time, e.g., one half second, thus producing activity in the robot, such as moving forward or turning.
         sleepingTime = 0
-        for x in range(arbitratorResult[0]):
+        for x in range(len(arbitratorResult[0])):
             sleepingTime += arbitratorResult[0][x][2]
         time.sleep(sleepingTime)
         print("Har kjørt 5")
@@ -66,7 +66,7 @@ class BBCON:
         print("Har kjørt 6")
         for sensob in self.sensor_objs:
             sensob.reset()
-        return breakProg
+        return False
 
 
 class Sensob:
@@ -79,7 +79,7 @@ class Sensob:
         self.object.update()
 
     def getValue(self):
-        self.object.get_value()
+        return self.object.get_value()
 
     def reset(self):
         self.object.reset()
@@ -129,8 +129,10 @@ class Motob:
         if operation is None:
             use_operation = self.value
         for motor in self.motors:
+            print("motor recommendations som skal kjøre:", use_operation)
             for rec in use_operation:
                 motor.set_value(rec)
+                time.sleep(rec[2])
             
 class Behavior:
     #   Classvariables
@@ -154,6 +156,7 @@ class Behavior:
         if self.behavior_number == 1:
             # MÅ DEFINERES I MAIN AT BEHAVIOR 1 objektet (kamera behavior) har avstandsmåler som andre sensob
             # slik at avstandsmåleren havner i slot 2 på values
+            print(values)
             distance = values[1]
             if distance < 4:
                 return True
@@ -165,6 +168,7 @@ class Behavior:
         elif self.behavior_number == 3:
             if values[0] < 5:
                 self.active_flag = True
+                return True
 
         elif self.behavior_number == 4: # Bare kjører fremover, lav prioritet slik at hvis ingenting annet skjer, så kjører den fremover.
             return True
@@ -177,8 +181,10 @@ class Behavior:
             values.append(sensob.getValue())
 
         if self.behavior_number == 1:
-            # TODO
-            pass
+            distance = values[1]
+            if distance > 4:
+                return True
+            return False
 
         elif self.behavior_number == 2:
             # TODO
@@ -186,11 +192,12 @@ class Behavior:
 
         elif self.behavior_number == 3:
             self.sensobs[0].update()
-            if self.sensobs[0].get_value() > 5:
-                self.active_flag = False
+            if self.sensobs[0].getValue() > 5:
+                return True
+            return False
 
         elif self.behavior_number == 4: # vi vil ikke at denne skal deaktiveres
-            pass
+            return False
 
     def update(self):
         # TODO
@@ -218,7 +225,7 @@ class Behavior:
         values = []
         for sensob in self.sensobs:
             values.append(sensob.getValue())
-
+        print("Sense and act er kalt...")
         # bilde, stoppe på rød vegg = behavior nr1
         if self.behavior_number == 1:
             # TODO
@@ -227,12 +234,13 @@ class Behavior:
             hits = 0
             for x in range(128):
                 for y in range(96):
-                    rgbValue = imageObject.getpixel()
-                    if rgbValue[0] > 200:
+                    rgbValue = imageObject.getpixel((x,y))
+                    if rgbValue[0] > 30:
                         hits += 1
+                    print(rgbValue)
             hitPercent = hits/12288
             self.match_degree = hitPercent
-            self.weight = self.match_degree * self.priority
+            #self.weight = self.match_degree * self.priority
             self.halt_request = True
 
             #Lag en motor-recommendation
@@ -242,12 +250,17 @@ class Behavior:
             pass
 
         elif self.behavior_number == 3:
-            self.match_degree = 5 - self.sensobs[0].get_value()
-            self.motor_recommendations = [[-1, -1, 1], [1, -1, 1]]
+            self.match_degree = (5 - self.sensobs[0].getValue())/5
+            self.motor_recommendations = [[-0.1, -0.1, 1], [0.1, -0.1, 1]]
 
         elif self.behavior_number == 4:
             self.match_degree = 1
-            self.motor_recommendations = [[1, 1, 1]]
+            self.motor_recommendations = [[0.1, 0.1, 1]]
+        print("Prøver å sette vekt")
+        print("priority:", self.priority)
+        print("match degree:", self.match_degree)
+        self.weight = self.priority * self.match_degree
+        print("Har satt weight:", self.weight, "for behavior nummer:", self.behavior_number)
 
 
 
@@ -260,14 +273,19 @@ class Arbitrator:
         cur_val = 0
         intervall = []
         for act_behv in self.bbcon.act_behaviors:
+            print(self.bbcon.act_behaviors)
+            print(act_behv)
+            print(act_behv.weight)
+            print("Eier:", act_behv.behavior_number)
             intervall.append([cur_val, cur_val + act_behv.weight])  # Lager intervall med størresle bassert på vekten deres. Dvs. hvis du har to behaviors med vekt 0.8 og 0.5 vil intervallet bli [[0, 0.8],[0.8, 1.3]]
             cur_val = cur_val + act_behv.weight
-        win_weight = random.randrange(intervall[-1][-1]) # Velger tilfeldig ut en verdi innenfor intervallet. Større intervall vil da ha større sanns. for å vinne
+        win_weight = random.uniform(0, intervall[-1][-1]) # Velger tilfeldig ut en verdi innenfor intervallet. Større intervall vil da ha større sanns. for å vinne
         for i in range(len(intervall)):
             if win_weight >= intervall[i][0]:
                 if win_weight <= intervall[i][1]: # Sjekker hvilket intervall tallet havnet innenfor og returnerer indexen
                     win_behv = self.bbcon.act_behaviors[i]
                     break
+        print("Winner:", win_behv.behavior_number)
         return win_behv.motor_recommendations, win_behv.halt_request
 
 
@@ -282,16 +300,18 @@ def main():
     sensList = [irSens, ultraSens, refSens, camSens]
 
     motor1 = Motors()
-    motorList = [motor1]
+    motor1.set_value([0, 0, 1])
+    motob1 = Motob([motor1], None)
+    motobList = [motob1]
 
     print("Motorer opprettet")
 
-    bbcon = BBCON(None, sensList, motorList, None)
+    bbcon = BBCON(None, sensList, motobList, None)
 
     print("BBCON opprettet")
 
-    redBehavior = Behavior(bbcon, [camSens, ultraSens], None, False, False, 0.7, None, None, 1)
-    dodgeBehavior = Behavior(bbcon, [ultraSens], None, False, False, 0.9, None, None, 3)
+    redBehavior = Behavior(bbcon, [camSens, ultraSens], None, False, False, 0.9, None, None, 1)
+    dodgeBehavior = Behavior(bbcon, [ultraSens], None, False, False, 0.8, None, None, 3)
     driveBehavior = Behavior(bbcon, [], None, True, False, 0.1, None, None, 4)
 
     print("Behaviors opprettet")
@@ -307,6 +327,7 @@ def main():
     zumoButton.wait_for_press()
     while not runProg:
         runProg = bbcon.run_one_timestep()
+    motor1.set_value([0, 0, 1])
 
 main()
 
