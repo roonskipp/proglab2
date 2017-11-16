@@ -128,13 +128,13 @@ class Behavior:
             pass
 
         elif self.behavior_number == 3:
-            # TODO
-            pass
+            if values[0] < 5:
+                self.active_flag = True
 
         elif self.behavior_number == 4: # Bare kjører fremover, lav prioritet slik at hvis ingenting annet skjer, så kjører den fremover.
             return True
 
-    def consider_deavtivation(self):
+    def consider_deactivation(self):
         # TODO
 
         values = []
@@ -150,8 +150,9 @@ class Behavior:
             pass
 
         elif self.behavior_number == 3:
-            # TODO
-            pass
+            self.sensobs[0].update()
+            if self.sensobs[0].get_value() > 5:
+                self.active_flag = False
 
         elif self.behavior_number == 4: # vi vil ikke at denne skal deaktiveres
             pass
