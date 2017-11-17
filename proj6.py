@@ -168,7 +168,7 @@ class Behavior:
                     return True
 
         elif self.behavior_number == 3:
-<<<<<<< Updated upstream
+<<<<<< Updated upstream
             if values[0] < 5:
                 self.active_flag = True
                 return True
