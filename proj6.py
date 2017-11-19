@@ -168,15 +168,12 @@ class Behavior:
                     return True
 
         elif self.behavior_number == 3:
-<<<<<< Updated upstream
             if values[0] < 5:
                 self.active_flag = True
                 return True
-=======
             for surface_color in values[0]:
                 if not -0.1 < surface_color <  + 0.1:
                     return True
->>>>>>> Stashed changes
 
         elif self.behavior_number == 4: # Bare kjører fremover, lav prioritet slik at hvis ingenting annet skjer, så kjører den fremover.
             return True
